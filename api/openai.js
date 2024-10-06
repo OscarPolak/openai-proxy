@@ -1,10 +1,16 @@
 export default async function handler(req, res) {
+  // Allow requests from any origin (CORS headers)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end(); // Pre-flight request for CORS
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
-
-  // Log the request body to see if data is coming through
-  console.log('Request Body:', req.body);
 
   const { inputText } = req.body;
 
@@ -17,7 +23,7 @@ export default async function handler(req, res) {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Use your OpenAI API key here
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Use your OpenAI API key
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -31,11 +37,8 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-
-    // Log the OpenAI response to see what's returned
-    console.log('OpenAI Response:', data);
-
-    // Return the OpenAI response
+    
+    // Return the response with the de-cringed text
     res.status(200).json({ decringedText: data.choices[0].message.content });
   } catch (error) {
     console.error('Error communicating with OpenAI API:', error);
