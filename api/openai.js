@@ -1,3 +1,16 @@
+const response = await fetch('https://api.openai.com/v1/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${apiKey}`, // Make sure this is exactly "Bearer {apiKey}"
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'text-davinci-003',
+    prompt: `Make this LinkedIn post less cringy and more witty: ${inputText}`,
+    max_tokens: 150,
+  }),
+});
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
