@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       }
 
       // Use your OpenAI API key from environment variables
-      const apiKey = 'sk-svcacct-bst2Ee2gOoOV4lSWfjmujgfRsfs9WyJK9-f0mMbI_PlWuBuwvpZWIuiPqypd9AXCZGNRKT3BlbkFJAexqtnVy4VGpJTheYe1ciknwhcR48hbOkZ039GfDgdiNfbO723cKx4sEqqjsocQh_3OAA';
+      const apiKey = process.env.OPENAI_API_KEY;
 
       // Make the API request to OpenAI
       const response = await fetch('https://api.openai.com/v1/completions', {
