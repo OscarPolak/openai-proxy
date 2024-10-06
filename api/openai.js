@@ -1,18 +1,18 @@
-import { json } from 'micro'; // Import micro for JSON parsing
+import { json } from 'micro'; // Import micro for body parsing
 
 export default async function handler(req, res) {
-  // Parse the incoming request body
-  const { inputText } = await json(req);
-
-  // Check if inputText is provided
-  if (!inputText) {
-    return res.status(400).json({ error: "No input text provided" });
-  }
-
-  const apiKey = process.env.OPENAI_API_KEY; // Fetch OpenAI API key from environment variables
-
   try {
-    // Make the API request to OpenAI
+    // Parse the request body
+    const { inputText } = await json(req);
+
+    // Validate inputText
+    if (!inputText) {
+      return res.status(400).json({ error: "No input text provided" });
+    }
+
+    // Make the request to OpenAI API
+    const apiKey = process.env.OPENAI_API_KEY;
+
     const response = await fetch('https://api.openai.com/v1/completions', {
       method: 'POST',
       headers: {
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     const data = await response.json();
     res.status(200).json({ decringedText: data.choices[0].text });
   } catch (error) {
-    console.error("Error calling OpenAI API:", error);
-    res.status(500).json({ error: 'Error calling OpenAI API' });
+    console.error("Error in serverless function:", error);
+    res.status(500).json({ error: 'Serverless function error' });
   }
 }
