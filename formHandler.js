@@ -1,23 +1,23 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');
-    const textarea = document.querySelector('.framer-form-input');
+    const form = document.querySelector('form'); // Form element
+    const textarea = document.querySelector('.framer-form-input'); // Textarea element
 
     form.addEventListener('submit', async function (event) {
-      event.preventDefault(); // Prevent the form from refreshing the page
+      event.preventDefault(); // Prevent form reload
 
-      const inputText = textarea.value; // Get the textarea value
+      const inputText = textarea.value; // Get textarea value
 
-      // Check if the input is empty
+      // Log the inputText to verify it's being captured
+      console.log('Textarea Input:', inputText);
+
       if (!inputText) {
         alert('Please enter a LinkedIn post!');
         return;
       }
 
-      console.log('Sending input:', inputText); // Log the input text
-
       try {
-        const response = await fetch('https://openai-proxy-cyan-kappa.vercel.app//api/openai', {
+        const response = await fetch('https://your-vercel-url.vercel.app/api/openai', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -25,16 +25,14 @@
           body: JSON.stringify({ inputText }), // Send inputText as JSON
         });
 
-        // Check if the request was successful
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
+        // Log request body to verify it's being sent
+        console.log('Request Sent:', JSON.stringify({ inputText }));
 
+        // Handle response
         const data = await response.json();
-        console.log('Response data:', data); // Log the response data
+        console.log('Response Data:', data);
 
-        // Show the de-cringed text in a pop-up
-        alert(`De-cringed Text: ${data.decringedText}`);
+        alert(`De-cringed Text: ${data.decringedText}`); // Show de-cringed text
 
       } catch (error) {
         console.error('Error:', error);
