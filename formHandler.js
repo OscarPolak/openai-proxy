@@ -17,7 +17,7 @@
       }
 
       try {
-        const response = await fetch('https://your-vercel-url.vercel.app/api/openai', {
+        const response = await fetch('https://openai-proxy-cyan-kappa.vercel.app/api/openai', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
