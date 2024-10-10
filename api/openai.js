@@ -24,7 +24,8 @@ export default async function handler(req, res) {
       const parsedBody = JSON.parse(body); // Manually parse JSON body
       console.log('Parsed request body:', parsedBody);
 
-      const { inputText } = parsedBody;
+      // Handle both `inputText` (lowercase) and `InputText` (uppercase)
+      const inputText = parsedBody.inputText || parsedBody.InputText;
 
       // If inputText is missing, return an error
       if (!inputText) {
