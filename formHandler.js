@@ -1,20 +1,23 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form'); // Use form element
-    const textarea = document.querySelector('.framer-form-input'); // Target textarea by its class
+    const form = document.querySelector('form');
+    const textarea = document.querySelector('.framer-form-input');
 
     form.addEventListener('submit', async function (event) {
-      event.preventDefault(); // Prevent form reload
+      event.preventDefault(); // Prevent the form from refreshing the page
 
-      const inputText = textarea.value; // Get the text from the textarea
+      const inputText = textarea.value; // Get the textarea value
 
+      // Check if the input is empty
       if (!inputText) {
-        alert('Please enter some text!'); // Validate input
+        alert('Please enter a LinkedIn post!');
         return;
       }
 
+      console.log('Sending input:', inputText); // Log the input text
+
       try {
-        const response = await fetch('https://your-vercel-url.vercel.app/api/openai', {
+        const response = await fetch('https://openai-proxy-cyan-kappa.vercel.app//api/openai', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -22,9 +25,15 @@
           body: JSON.stringify({ inputText }), // Send inputText as JSON
         });
 
-        const data = await response.json(); // Get response data
+        // Check if the request was successful
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
 
-        // Show the de-cringed text in a browser pop-up alert
+        const data = await response.json();
+        console.log('Response data:', data); // Log the response data
+
+        // Show the de-cringed text in a pop-up
         alert(`De-cringed Text: ${data.decringedText}`);
 
       } catch (error) {
