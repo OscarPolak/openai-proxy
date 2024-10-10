@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   // Handle pre-flight request for CORS (OPTIONS method)
   if (req.method === 'OPTIONS') {
-    return res.status(200).end(); // If it's an OPTIONS request, return 200 OK
+    return res.status(200).end(); // Respond to pre-flight request for CORS
   }
 
   // Make sure the request is a POST method
@@ -14,10 +14,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Get the input text from the request body
   const { inputText } = req.body;
 
-  // If there's no input text, return an error
   if (!inputText) {
     return res.status(400).json({ error: 'No input text provided' });
   }
@@ -42,7 +40,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Return the de-cringed text as the response
+    // Return the de-cringed text with the proper Content-Type header
+    res.setHeader('Content-Type', 'application/json');  // This is crucial for CORB
     res.status(200).json({ decringedText: data.choices[0].message.content });
   } catch (error) {
     console.error('Error communicating with OpenAI API:', error);
