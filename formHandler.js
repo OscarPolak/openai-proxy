@@ -24,14 +24,22 @@
           body: JSON.stringify({ inputText }), // Send the inputText as JSON
         });
 
-        const data = await response.json();
-        console.log('Received response:', data); // Log the response from the server
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
 
-        alert(`De-cringed Text: ${data.decringedText}`); // Show the result in a pop-up
+        const data = await response.json();
+        console.log('Received response from OpenAI:', data); // Log the response from Vercel
+
+        // Extract the de-cringed text from the OpenAI response
+        const decringedText = data.decringedText || data.choices[0].message.content;
+
+        // Show the de-cringed text in a pop-up or update the page
+        alert(`De-cringed Text: ${decringedText}`);
 
       } catch (error) {
         console.error('Error:', error);
-        alert('Something went wrong.');
+        alert('Something went wrong. Please try again.');
       }
     });
   });
