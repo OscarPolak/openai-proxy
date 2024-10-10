@@ -1,10 +1,10 @@
 export default async function handler(req, res) {
-  // Add CORS headers to allow cross-origin requests from your Framer website
-  res.setHeader('Access-Control-Allow-Origin', '*');  // You can replace '*' with your specific domain to restrict access
+  // CORS headers to allow requests from anywhere (or specify your domain)
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle pre-flight CORS request (for POST requests)
+  // Handle CORS preflight request (for POST requests)
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -14,38 +14,39 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Extract the inputText from the request body
+  // Extract the input text from the request body
   const { inputText } = req.body;
 
+  // Check if the input text is missing
   if (!inputText) {
     return res.status(400).json({ error: 'No input text provided' });
   }
 
   try {
-    // Call the OpenAI API
+    // Send request to OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Use your OpenAI API key from Vercel environment variables
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Make sure your API key is in Vercel env variables
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo', // The GPT model you're using
+        model: 'gpt-3.5-turbo', // ChatGPT model
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: `De-cringe this LinkedIn post: ${inputText}` }
         ],
-        max_tokens: 150, // Limit the length of the response
+        max_tokens: 150,
       }),
     });
 
     const data = await response.json();
 
-    // Return the de-cringed text as the response to the form
+    // Send the de-cringed response back to the form
     res.status(200).json({ decringedText: data.choices[0].message.content });
 
   } catch (error) {
-    console.error('Error communicating with OpenAI API:', error);
-    res.status(500).json({ error: 'Error processing the request' });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Something went wrong on the server' });
   }
 }
